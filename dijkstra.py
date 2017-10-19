@@ -32,25 +32,15 @@ v=list(set(v))
 s="a"
 path=[]
 path.append(s)
-secc=[]
-for elm in e:
-   if elm[0]==s:
-      secc.append(elm)
-s=getbest(secc,path)
-print secc
-print s
-"""
-l=[]
-path=[]
-path.append('d')
-l.append(('b',5))
-l.append(('c',10))
-l.append(('d',2))
-
-
-print 'd' not in path
-
-print getbest(l,path)  
-"""
-
+while len(path) < len(v):
+   secc=[]
+   for elm in e:
+      if elm[0]==s:
+         secc.append(elm)
+   sn=getbest(secc,path)
+   s=sn[1]
+   path.append(s)
+   print secc
+   print s
+print path
    
