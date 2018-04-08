@@ -9,8 +9,9 @@ def modilarity(triplets,neighbors):
    for elm in triplets:
       n1=elm[0]
       n2=elm[1]
-      print neighbors[n1]
-      n=(n1,n2,2)
+      #calculate the similarity
+      sim=float(len(set(adj[n1]).intersection(adj[n2])))/sqrt(len(set(adj[n1]+adj[n2])))
+      n=(n1,n2,sim)
       result.append(n)
    return result
 #this function to get a list of neighbors foreach node
@@ -33,35 +34,35 @@ def getNeighbors(edges):
 
 if __name__=='__main__' :
    #load the graph from text file
-   dataset=open("dataset","r")
+   dataset=open("dataset2","r")
+   #get all lines of the dataset
    lines=dataset.readlines()
-   #list of vertices
-   v=[]
-   # liste of edge
+   #dictionary to save for each vertices its neighbors
+   adj={}
+   #liste of edges
    e=[]
-   #get list of both edge and vertice from loaded graph
+   # fill the dictionary and the list
    for l in lines:
      pair=l.strip().split("\t")
      if len(pair)>1 :
         (a,b)=pair
-        e.append((int(a),int(b)))
-        v.append(int(a))
-        v.append(int(b))
-     else:
-        v.append(int(pair[0]))
-
-   #remove all duplicated vertcies in the list
-   v=list(set(v))
-   triplets=[]
-   #generate the triplets store for the graph
-   for i in xrange(len(v)):
-      for j in xrange(len(v)):
-         if i<j:
-            t=(i,j,0)
-            triplets.append(t)
+        a=int(a)
+        b=int(b)
+        e.append((a,b))
+        if adj.has_key(a):
+        	l=adj[a]
+        	l.append(b)
+        	adj[a]=l
+        else:
+        	adj[a]=[b]
+        if adj.has_key(b):
+        	l=adj[b]
+        	l.append(a)
+        	adj[b]=l
+        else:
+        	adj[b]=[a]
    ng=getNeighbors(e)
-   print modilarity(triplets,ng)
-   
-   #print set(ng[2]+ng[1])
-   
-   
+   sim= modilarity(e,ng)
+   for elm in sim:
+   	   print elm
+   print float(len(set(adj[10]).intersection(adj[11])))/sqrt(len(set(adj[10]+adj[11])))
