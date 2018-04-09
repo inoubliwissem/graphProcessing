@@ -49,7 +49,12 @@ def getCore(simlarity, neighbors,e,l):
 			if StrongNeighbors >= l:
 				c.append(n)
 	return c
-
+def getNeighborsOfCore(cluster,neighbors):
+	neighbor =[]
+	for c in cluster:
+		for n in neighbors[c]:
+			neighbor.append(n)
+	return neighbor
 if __name__=='__main__' :
    #load the graph from text file
    dataset=open("dataset2","r")
@@ -86,5 +91,19 @@ if __name__=='__main__' :
    #get the core nodes of the graph with epsilon = 0.5 and lambda = 2
    cores=getCore(sim, ng,0.5,2)
    clusters=[]
-   for n in cores:
+   i=0
+   clusters.append([cores[0]])
+   cores.remove(cores[0])
+   while(len(cores)>1):
+   	  n=cores[0]
+   	  added=0
+   	  for c in clusters:
+   	  	neighCores=getNeighborsOfCore(c,ng)
+   	  	if n in neighCores:
+   	  		c.append(n)
+   	  		cores.remove(n)
+   	  		added=1
+   	  	if added==1:
+   	  		break
+
    	   
