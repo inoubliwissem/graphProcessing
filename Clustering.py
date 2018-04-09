@@ -79,8 +79,12 @@ if __name__=='__main__' :
         	adj[b]=l
         else:
         	adj[b]=[a]
+   #get the neighbors matrix
    ng=getNeighbors(e)
+   #calculate the similarity 
    sim= modilarity(e,ng)
-   for elm in sim:
-   	   print elm
-   print getCore(sim, ng,0.7,2)
+   #get the core nodes of the graph with epsilon = 0.5 and lambda = 2
+   cores=getCore(sim, ng,0.5,2)
+   clusters=[]
+   for n in cores:
+   	   
