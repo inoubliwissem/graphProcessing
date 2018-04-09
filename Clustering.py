@@ -31,13 +31,25 @@ def getNeighbors(edges):
    	    	l=[a]
    	    	neighbors[b]=l
    return neighbors
+def getStrongNeighbors(similarity,n,e):
+   	nb=0
+   	for elm in similarity:
+   	   	if (elm[0]==n or elm[1]==n) and  elm[2]>=e :
+   	   	   	nb=nb+1
+   	return nb   	   	  
+
    #In this function we get a set of core node according the epsilon and lambda values
    # it takes the similarity triplets and the neighbors dictionnary
 def getCore(simlarity, neighbors,e,l):
 	nodes=neighbors.keys()
+	c=[]
 	for n in nodes:
-		if len(neighbors[n]) > l:
-			print n
+		if len(neighbors[n]) >= l:
+			StrongNeighbors=getStrongNeighbors(simlarity,n,e)
+			if StrongNeighbors >= l:
+				c.append(n)
+	return c
+
 if __name__=='__main__' :
    #load the graph from text file
    dataset=open("dataset2","r")
@@ -71,5 +83,4 @@ if __name__=='__main__' :
    sim= modilarity(e,ng)
    for elm in sim:
    	   print elm
-   #print float(len(set(adj[10]).intersection(adj[11])))/sqrt(len(set(adj[10]+adj[11])))
-   getCore(sim,ng,0.7,2)
+   print getCore(sim, ng,0.7,2)
