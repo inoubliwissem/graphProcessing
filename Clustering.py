@@ -31,7 +31,13 @@ def getNeighbors(edges):
    	    	l=[a]
    	    	neighbors[b]=l
    return neighbors
-
+   #In this function we get a set of core node according the epsilon and lambda values
+   # it takes the similarity triplets and the neighbors dictionnary
+def getCore(simlarity, neighbors,e,l):
+	nodes=neighbors.keys()
+	for n in nodes:
+		if len(neighbors[n]) > l:
+			print n
 if __name__=='__main__' :
    #load the graph from text file
    dataset=open("dataset2","r")
@@ -65,4 +71,5 @@ if __name__=='__main__' :
    sim= modilarity(e,ng)
    for elm in sim:
    	   print elm
-   print float(len(set(adj[10]).intersection(adj[11])))/sqrt(len(set(adj[10]+adj[11])))
+   #print float(len(set(adj[10]).intersection(adj[11])))/sqrt(len(set(adj[10]+adj[11])))
+   getCore(sim,ng,0.7,2)
