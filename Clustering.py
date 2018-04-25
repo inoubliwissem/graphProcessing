@@ -55,6 +55,12 @@ def getNeighborsOfCore(cluster,neighbors):
 		for n in neighbors[c]:
 			neighbor.append(n)
 	return neighbor
+def getSim(similarity,n1,n2):
+   	nb=0
+   	for elm in similarity:
+   	   	if (elm[0]==n1 and elm[1]==n2) or  (elm[0]==n2 and elm[1]==n1) :
+   	   	   	return elm[2]
+   	return nb
 if __name__=='__main__' :
    #Load the graph from text file
    dataset=open("dataset2","r")
@@ -90,24 +96,27 @@ if __name__=='__main__' :
    sim= modilarity(e,ng)
    #get the core nodes of the graph with epsilon = 0.5 and lambda = 2
    cores=getCore(sim, ng,0.5,2)
+   print cores
    clusters=[]
    i=0
-   clusters.append([cores[0]])
+   #clusters.append([cores[0]])
    #cores.remove(cores[0])
    #show all cores nodes
    while(len(cores)>0):
        n=cores[0]
-       #for each node we get all it cluster
+       #for each node we get all it neighbors
        neighbors_n=getNeighborsOfCore([n],ng)
        cluster=[]
+       cluster.append(n)
        for m in neighbors_n:
-           if n in cores:
+       	   print n,m, getSim(sim,n,m)
+           if getSim(sim,n,m) >= 0.5:
                cluster.append(m)
                #cores.remove(cores[m])
        clusters.append(cluster)
                
        cores.remove(cores[0])
    print clusters
-     
 
+     
    	   
