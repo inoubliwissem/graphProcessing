@@ -70,6 +70,7 @@ def getBridgeVetices(clusters,vertices,neighbors):
 	bridges=[]
         outlries=[]
         rst=[]
+        print vertices
         for v in vertices:
            ngs=neighbors[v]
            i=0
