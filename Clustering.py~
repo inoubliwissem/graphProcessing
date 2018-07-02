@@ -70,7 +70,6 @@ def getBridgeVetices(clusters,vertices,neighbors):
 	bridges=[]
         outlries=[]
         rst=[]
-        print vertices
         for v in vertices:
            ngs=neighbors[v]
            i=0
@@ -94,7 +93,8 @@ def getSim(similarity,n1,n2):
 
 if __name__=='__main__' :
    #Load the graph from text file
-   dataset=open("dataset2","r")
+   #dataset=open("dataset2","r")
+   dataset=open("G2","r")
    #Get all lines of the dataset
    lines=dataset.readlines()
    #Dictionary to save for each vertices its neighbors

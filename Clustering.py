@@ -93,7 +93,8 @@ def getSim(similarity,n1,n2):
 
 if __name__=='__main__' :
    #Load the graph from text file
-   dataset=open("dataset2","r")
+   #dataset=open("dataset2","r")
+   dataset=open("G2","r")
    #Get all lines of the dataset
    lines=dataset.readlines()
    #Dictionary to save for each vertices its neighbors
@@ -130,7 +131,7 @@ if __name__=='__main__' :
    #calculate the similarity 
    sim= modilarity(e,ng)
    #get the core nodes of the graph with epsilon = 0.5 and lambda = 2
-   cores=getCore(sim, ng,0.7,3)
+   cores=getCore(sim, ng,0.5,3)
    clusters=[]
    #show all cores nodes
    print "list of a cores vertices",cores
