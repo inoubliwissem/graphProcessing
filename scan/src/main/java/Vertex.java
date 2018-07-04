@@ -6,10 +6,12 @@ public class Vertex {
     private int id;
     private String type;
     private List<Integer> neigbords;
+    private List<Integer> strongNeigbords;
 
     public Vertex(int id) {
         this.id = id;
         neigbords = new ArrayList<Integer>();
+        strongNeigbords=new ArrayList<Integer>();
     }
 
     public Vertex() {
@@ -55,7 +57,38 @@ public class Vertex {
       }
         ng+="]";
         System.out.println("vertice :"+this.id+" neighbors :"+ng);
-
-
     }
+/*
+    public  List<Integer>getStrongNei(double sigma)
+    {
+        List<Integer> list_strong_neigh=new ArrayList<Integer>();
+
+        for( int vi : this.getNeigbords())
+        {
+            for(Edge e: edges)
+            {
+                if(this.id==e.getFromNode() && vi==e.getEndNode() && e.getSimilarity()>=sigma)
+                {
+                    list_strong_neigh.add(e.getEndNode());
+                }
+                if(this.id==e.getEndNode() && vi==e.getFromNode() && e.getSimilarity()>=sigma)
+                {
+                    list_strong_neigh.add(e.getFromNode());
+                }
+
+            }
+        }
+
+        return list_strong_neigh;
+    }*/
+
+    public void addStrongNeighbors(int neighbors)
+    {
+        this.strongNeigbords.add(neighbors);
+    }
+    public List<Integer> getStrongNeigbords()
+    {
+        return strongNeigbords;
+    }
+
 }

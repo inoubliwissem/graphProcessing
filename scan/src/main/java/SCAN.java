@@ -2,11 +2,14 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SCAN {
-    private static List<Vertex> vertices;
-    private static List<Edge> edges;
+    /*
+    public static List<Vertex> vertices;
+    public static List<Edge> edges;
 
     // public function to add a vertex V to our shared list of vertices "vertices".
     public static void addVertex(Edge e) {
@@ -79,7 +82,28 @@ public class SCAN {
         return isC;
     }
 
+    private static int getListintersection(List<Integer> lst1,Set<Integer> lst2) {
+        int rst = 0;
+        if (lst1.size() > lst2.size()) {
+            for (Integer i : lst2) {
+                if (lst1.contains(i)) rst++;
+            }
+
+
+        } else {
+            for (Integer i : lst1) {
+                if (lst2.contains(i)) rst++;
+            }
+
+        }
+        return rst;
+
+    }
+
+
+*/
     public static void main(String argc[]) {
+        /*
         vertices = new ArrayList<Vertex>();
         edges = new ArrayList<Edge>();
         // read an input graph
@@ -126,7 +150,7 @@ public class SCAN {
             for(Vertex v : vertices)
             {
               if(isCore(v,3,0.7))
-              {
+              {   v.setType("core");
                   cores_vertices.add(v);
               }
             }
@@ -134,11 +158,87 @@ public class SCAN {
             for(Vertex v : cores_vertices)
             {
                 v.printVertex();
+               // System.out.println(v.getStrongNei(0.7).size());
             }
+
+            // start a clustering step
+            List<Set<Integer>> clusters=new ArrayList<Set<Integer>>();
+
+            // for each core vertex in the list
+       //
+               for(Vertex v : cores_vertices)
+            {   // if we on first step, when we haven't any cluster
+                // add a current core vertex and his strong neighbors
+                if(clusters.size()==0) {
+                    Set<Integer> cluster=new HashSet<Integer>();
+                    cluster.add(v.getId());
+                    cluster.addAll(v.getStrongNei(0.7));
+                    clusters.add(cluster);
+                 }
+                else {
+                    //variable to memorise when we have merge the current vertex into one existing cluster
+                    // when we fid  at least one shared neighbor between a current core vertex and a some cluster
+                   // we merge them into same cluster
+                    //else
+                    //  we must create a new cluster which group  the current vertex ant his strong
+                    // neighbors into same cluster
+                    boolean added=false;
+                    for(Set<Integer> c : clusters)
+                    {   // if a difference between current cluster and a neighbors of a v core vertex not null
+                        // push a v and their strong neighbors into current cluster
+
+                        if(getListintersection(v.getStrongNei(0.7),c)>0)
+                        {
+                          c.addAll(v.getStrongNei(0.7));
+                          c.add(v.getId());
+                          added=true;
+                          break;
+                        }
+
+
+
+                    }
+                    // if we parse all cluster and we cannot get added the current  vertex v
+                    // we must create a new cluster and push into this a current core and their strong neighbors
+                    // the add the new cluster to our set of clusters
+                    //
+                    if(!added)
+                    {
+                         Set<Integer> newcluster= new HashSet<Integer>();
+                            newcluster.add(v.getId());
+                            newcluster.addAll(v.getStrongNei(0.7));
+                            clusters.add(newcluster);
+
+                    }
+
+
+
+                }
+
+
+            }
+            System.out.println("we fined a "+clusters.size() +" clusters");
+               for(Set<Integer> c : clusters)
+               {
+                   System.out.println(" cluster : ");
+                   for(int v : c)
+                   {
+                       System.out.print(" "+v);
+                   }
+                   System.out.println(" \n ****************** : ");
+
+               }
+            //
 
 
         } catch (IOException e) {
             System.out.print(e.getMessage());
         }
+
+        */
+        Fraction p1=new Fraction();
+        p1.readSubGraph("dataset2");
+        p1.calculateSimilarity();
+        p1.clustering(0.7,3);
     }
 }
