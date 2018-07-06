@@ -6,20 +6,22 @@ import java.util.List;
 import java.util.Set;
 
 public class Fraction {
-    private static List<Vertex> vertices;
-    private static List<Edge> edges;
+    private List<Vertex> vertices;
+    private List<Edge> edges;
     private List<Vertex> cores_vertices;
     private Set<Integer> border_vertices;
     private Set<Integer> outiler_vertices;
     private Set<Integer> bridge_vertices;
+    private List<Set<Integer>> clusters;
 
     public Fraction() {
         vertices = new ArrayList<Vertex>();
         edges = new ArrayList<Edge>();
         cores_vertices = new ArrayList<Vertex>();
-        border_vertices=new HashSet<Integer>();
-        outiler_vertices=new HashSet<Integer>();
-        bridge_vertices=new HashSet<Integer>();
+        border_vertices = new HashSet<Integer>();
+        outiler_vertices = new HashSet<Integer>();
+        bridge_vertices = new HashSet<Integer>();
+        clusters = new ArrayList<Set<Integer>>();
     }
 
     //  function to add a vertex V to list of vertices "vertices".
@@ -79,7 +81,8 @@ public class Fraction {
         }
         return isC;
     }
-     // function to get an intersection between two lists
+
+    // function to get an intersection between two lists
     private int getListintersection(List<Integer> lst1, Set<Integer> lst2) {
         int rst = 0;
         if (lst1.size() > lst2.size()) {
@@ -117,11 +120,12 @@ public class Fraction {
                 }
             }
 
-            System.out.println("in the graph we have "+vertices.size()+" vertices and "+edges.size()+" edges");
+
         } catch (Exception e) {
             System.out.println("Fraction erreur " + e.getMessage());
         }
     }
+
     // calulate a similarity for all edges in current sub graph
     public void calculateSimilarity() {
         //add a neighbors list to each bord of a edge
@@ -134,14 +138,16 @@ public class Fraction {
             e.similarityCalculation();
         }
     }
-   // get a list of a cores vertices in current sub graph
+
+    // get a list of a cores vertices in current sub graph
     public void filterCorevertices(int mu) {
         for (Vertex v : vertices) {
             if (v.getStrongNeigbords().size() >= mu) {
-               cores_vertices.add(v);
+                cores_vertices.add(v);
             }
         }
     }
+
     // function to get foreach vertice a list of his strong neighbors according "sigma" threshold
     public void computeStrongNeighbors(double sigma) {
         for (Vertex v : vertices) {
@@ -156,70 +162,62 @@ public class Fraction {
             }
         }
     }
+
     // function to add each border vertex to a global list of all border vertices
-    public void addBorderVertcies(List<Integer> listTBP)
-    {
-        for(Integer idv : listTBP)
-        {
-           boolean tv=false;
-          for (Vertex v: cores_vertices)
-          {
-              if (v.getId()==idv)
-              {
-                  tv=true;
-              }
-          }
-          if (!tv)
-          {
-              border_vertices.add(idv);
-          }
+    public void addBorderVertcies(List<Integer> listTBP) {
+        for (Integer idv : listTBP) {
+            boolean tv = false;
+            for (Vertex v : cores_vertices) {
+                if (v.getId() == idv) {
+                    tv = true;
+                }
+            }
+            if (!tv) {
+                border_vertices.add(idv);
+            }
         }
     }
+
     // clustering function
     public void clustering(double sigma, int mu) {
-        if(vertices.size()>0 && edges.size()>0)
-        {   // after a loading a given sub graph we calculate all similarity
+        if (vertices.size() > 0 && edges.size() > 0) {   // after a loading a given sub graph we calculate all similarity
             this.calculateSimilarity();
             // we find a strong neighbors foreach vertex according a sigma value
             this.computeStrongNeighbors(sigma);
             // filter a cores vertices in the sub graph
-         this.filterCorevertices(mu);
+            this.filterCorevertices(mu);
             // start SCAN algorithm
             // varibale to save a list of clusters
-            List<Set<Integer>> clusters=new ArrayList<Set<Integer>>();
-            for(Vertex v : cores_vertices){
+            //   List<Set<Integer>> clusters=new ArrayList<Set<Integer>>();
+            for (Vertex v : cores_vertices) {
                 // if we on first step, when we haven't any cluster
                 // add a current core vertex and his strong neighbors
-                if(clusters.size()==0) {
-                    Set<Integer> cluster=new HashSet<Integer>();
+                if (clusters.size() == 0) {
+                    Set<Integer> cluster = new HashSet<Integer>();
                     cluster.add(v.getId());
                     cluster.addAll(v.getStrongNeigbords());
                     // add border vertices
                     addBorderVertcies(v.getStrongNeigbords());
                     clusters.add(cluster);
-                }
-                else {
+                } else {
                     //variable to memorise when we have merge the current vertex into one existing cluster
                     // when we fid  at least one shared neighbor between a current core vertex and a some cluster
                     // we merge them into same cluster
                     //else
                     //  we must create a new cluster which group  the current vertex ant his strong
                     // neighbors into same cluster
-                    boolean added=false;
-                    for(Set<Integer> c : clusters)
-                    {   // if a difference between current cluster and a neighbors of a v core vertex not null
+                    boolean added = false;
+                    for (Set<Integer> c : clusters) {   // if a difference between current cluster and a neighbors of a v core vertex not null
                         // push a v and their strong neighbors into current cluster
 
-                        if(getListintersection(v.getNeigbords(),c)>0)
-                        {
+                        if (getListintersection(v.getNeigbords(), c) > 0) {
                             c.addAll(v.getStrongNeigbords());
                             c.add(v.getId());
                             // add border vertices
                             addBorderVertcies(v.getStrongNeigbords());
-                            added=true;
+                            added = true;
                             break;
                         }
-
 
 
                     }
@@ -227,9 +225,8 @@ public class Fraction {
                     // we must create a new cluster and push into this a current core and their strong neighbors
                     // the add the new cluster to our set of clusters
                     //
-                    if(!added)
-                    {
-                        Set<Integer> newcluster= new HashSet<Integer>();
+                    if (!added) {
+                        Set<Integer> newcluster = new HashSet<Integer>();
                         newcluster.add(v.getId());
                         newcluster.addAll(v.getStrongNeigbords());
                         //add border vertices
@@ -240,71 +237,75 @@ public class Fraction {
 
                 }
             }
-            System.out.println("we fined a "+clusters.size() +" clusters");
-            for(Set<Integer> c : clusters)
-            {
-                System.out.println(" cluster : ");
-                for(int v : c)
-                {
-                    System.out.print(" "+v);
-                }
-                System.out.println(" \n ****************** : ");
-
-            }
-            System.out.println("print a border vertices");
-            for(Integer v : border_vertices)
-                System.out.println(v);
 
             // get last vertices (outliers and bridges)
-            Set<Integer> all_precessed_vertices=new HashSet<Integer>();
-            for( Vertex v : cores_vertices)
-            {
+            Set<Integer> all_precessed_vertices = new HashSet<Integer>();
+            for (Vertex v : cores_vertices) {
                 all_precessed_vertices.add(v.getId());
 
             }
             all_precessed_vertices.addAll(border_vertices);
-            Set<Integer> unprocessed_vertices=new HashSet<Integer>();
-            for( Vertex v : vertices)
-            {
-                if(! all_precessed_vertices.contains(v.getId()))
+            Set<Integer> unprocessed_vertices = new HashSet<Integer>();
+            for (Vertex v : vertices) {
+                if (!all_precessed_vertices.contains(v.getId()))
                     unprocessed_vertices.add(v.getId());
             }
             // get a stats of each unprocessed vertices, we well annotated each one as an outliers or bridges
             // according their connections
-           for(Integer i : unprocessed_vertices)
-           {   int nb_connections=0;
-               for(Set<Integer> c : clusters)
-               {  // if we have a least one connection between a current unprocessed vertex I and a current cluster C
-                   // so we increment a nb_connections value, to be used after that to decide that a I is a bridge or an outlier
+            for (Integer i : unprocessed_vertices) {
+                int nb_connections = 0;
+                for (Set<Integer> c : clusters) {  // if we have a least one connection between a current unprocessed vertex I and a current cluster C
+                    // so we increment a nb_connections value, to be used after that to decide that a I is a bridge or an outlier
+                    if (getListintersection(getVertex(i).getNeigbords(), c) > 0) {
+                        nb_connections += 1;
+                        if (nb_connections >= 2) {
+                            bridge_vertices.add(i);
+                            break;
+                        }
+                    }
+                }
+                if (nb_connections < 2)
+                    outiler_vertices.add(i);
 
-                   if(getListintersection(getVertex(i).getNeigbords(),c)>0)
-                 {
-                     nb_connections+=1;
-                     if( nb_connections>=2) {
-                         bridge_vertices.add(i);
-                         break;
-                     }
-                 }
+            }
 
-               }
-              if(nb_connections==1)
-               outiler_vertices.add(i);
-
-           }
-
-            System.out.println("Bridges vertices");
-            for (Integer i : bridge_vertices) System.out.println(i);
-            System.out.println("Outliers vertices");
-            for (Integer i : outiler_vertices) System.out.println(i);
-
-
-
-
-        }
-        else
-        {
+        } else {
             System.out.print("we don't have a graph to compute it");
         }
+
+    }
+
+    public void printFractionDetails() {   // print a sub-graph details
+        System.out.println("in the graph we have " + vertices.size() + " vertices and " + edges.size() + " edges");
+        // print a cores vertices in the sub-graph
+        System.out.println("print a cores vertices");
+        for (Vertex v : cores_vertices)
+            System.out.println(v.getId());
+        // print a border vertices
+        System.out.println("print a border vertices");
+        for (Integer v : border_vertices)
+            System.out.println(v);
+
+        System.out.println("we fined a " + clusters.size() + " clusters");
+
+        for (Set<Integer> c : clusters) {
+            System.out.println(" cluster : ");
+            for (int v : c) {
+                System.out.print(" " + v);
+            }
+            System.out.println(" \n ****************** : ");
+
+        }
+        // print a bridges vertices
+        System.out.println("print a outliers vertices");
+        for (Integer v : this.bridge_vertices)
+            System.out.println(v);
+
+        // print a outliers vertices
+        System.out.println("print a outliers vertices");
+        for (Integer v : this.outiler_vertices)
+            System.out.println(v);
+
 
     }
 }
