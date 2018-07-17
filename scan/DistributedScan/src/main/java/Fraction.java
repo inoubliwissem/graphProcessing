@@ -8,7 +8,7 @@ import java.util.Set;
 public class Fraction {
     private List<Vertex> vertices;
     private List<Edge> edges;
-    private Set<Vertex> cores_vertices;
+    private List<Vertex> cores_vertices;
     private Set<Integer> border_vertices;
     private Set<Integer> outiler_vertices;
     private Set<Integer> bridge_vertices;
@@ -17,7 +17,7 @@ public class Fraction {
     public Fraction() {
         vertices = new ArrayList<Vertex>();
         edges = new ArrayList<Edge>();
-        cores_vertices = new HashSet<Vertex>();
+        cores_vertices = new ArrayList<Vertex>();
         border_vertices = new HashSet<Integer>();
         outiler_vertices = new HashSet<Integer>();
         bridge_vertices = new HashSet<Integer>();
@@ -64,16 +64,6 @@ public class Fraction {
             if (v.getId() == id) return v;
         }
         return null;
-    }
-
-    public boolean isexiste(Edge e) {
-
-        for (Edge ed : edges) {
-            if ((ed.getFromNode() == e.getEndNode() && ed.getEndNode() == e.getFromNode()) || (ed.getFromNode() == e.getFromNode() && ed.getEndNode() == e.getEndNode()))
-                return true;
-
-        }
-        return false;
     }
 
     // public function to determine that a given vertex v is core or not
@@ -132,112 +122,7 @@ public class Fraction {
 
 
         } catch (Exception e) {
-            System.out.println("Fraction ereur " + e.getMessage());
-        }
-    }
-
-    // read a graph with simpled file
-    public void readGraph(String file) {
-        // read an input graph
-        BufferedReader br = null;
-        FileReader fr = null;
-        try {
-            fr = new FileReader(file);
-            br = new BufferedReader(fr);
-            String line;
-            while ((line = br.readLine()) != null) {
-                String parts[] = line.split(";");
-                if (parts.length > 1) {
-                    int id_v = Integer.parseInt(parts[0]);
-                    Vertex v = new Vertex(id_v);
-                    v.addNeigbor(id_v);
-                    String neighbors[] = parts[1].split(",");
-                    for (int i = 0; i < neighbors.length; i++) {
-                        int en = Integer.parseInt(neighbors[i]);
-                        v.addNeigbor(en);
-                        if (!isexiste(new Edge(id_v, en))) {
-                            edges.add(new Edge(id_v, en));
-                        }
-                    }
-                    vertices.add(v);
-
-                }
-
-            }
-        } catch (Exception e) {
-            System.out.println("Fraction ereur " + e.getMessage());
-        }
-
-
-    }
-
-    // read a graph with simpled file
-    public void readPartitionOfGraph(String file) {
-        // read an input file partition
-        BufferedReader br = null;
-        FileReader fr = null;
-        // we prepare a variable to memorise all id of vertices in the part of graph
-        Set<Integer> vertices_id = new HashSet<Integer>();
-        // variable to save all vertices in edges
-        Set<Integer> vertices_edges = new HashSet<Integer>();
-        try {
-            fr = new FileReader(file);
-            br = new BufferedReader(fr);
-            String line;
-            while ((line = br.readLine()) != null) {
-                String parts[] = line.split(";");
-                if (parts.length > 1) {
-                    int id_v = Integer.parseInt(parts[0]);
-                    Vertex v = new Vertex(id_v);
-                    v.addNeigbor(id_v);
-                    String neighbors[] = parts[1].split(",");
-                    for (int i = 0; i < neighbors.length; i++) {
-                        int en = Integer.parseInt(neighbors[i]);
-                        v.addNeigbor(en);
-                        if (!isexiste(new Edge(id_v, en))) {
-                            edges.add(new Edge(id_v, en));
-                            vertices_edges.add(id_v);
-                            vertices_edges.add(en);
-                        }
-                    }
-                    vertices.add(v);
-                    vertices_id.add(v.getId());
-
-
-                }
-
-            }
-
-            if (vertices_edges.size() != vertices_id.size()) {
-                vertices_edges.removeAll(vertices_id);
-
-                for (Integer i : vertices_edges) {
-                    vertices.add(new Vertex(i));
-
-                }
-
-
-            }
-        } catch (Exception e) {
-            System.out.println("Fraction ereur " + e.getMessage());
-        }
-
-
-    }
-
-    // function to print a loaded graph
-    public void printGraph() {
-        for (Vertex v : vertices) {
-            System.out.println("V :" + v.getId() + " has a " + v.getNeigbords().size() + " neighbors " + v.getNeigbords());
-        }
-        calculateSimilarity();
-        for (Edge e : edges) {
-            System.out.println(e.getFromNode() + " to " + e.getEndNode() + " =" + e.getSimilarity());
-        }
-        //  computeStrongNeighbors(0.7);
-        //   filterCorevertices(3);
-        for (Vertex v : cores_vertices) {
-            System.out.println("VC " + v.getId() + " strong neighbors" + v.getStrongNeigbords());
+            System.out.println("Fraction erreur " + e.getMessage());
         }
     }
 
@@ -312,7 +197,7 @@ public class Fraction {
                     cluster.add(v.getId());
                     cluster.addAll(v.getStrongNeigbords());
                     // add border vertices
-                    addBorderVertcies(new ArrayList<Integer>(v.getStrongNeigbords()));
+                    addBorderVertcies(v.getStrongNeigbords());
                     clusters.add(cluster);
                 } else {
                     //variable to memorise when we have merge the current vertex into one existing cluster
@@ -329,7 +214,7 @@ public class Fraction {
                             c.addAll(v.getStrongNeigbords());
                             c.add(v.getId());
                             // add border vertices
-                            addBorderVertcies(new ArrayList<Integer>(v.getStrongNeigbords()));
+                            addBorderVertcies(v.getStrongNeigbords());
                             added = true;
                             break;
                         }
@@ -345,7 +230,7 @@ public class Fraction {
                         newcluster.add(v.getId());
                         newcluster.addAll(v.getStrongNeigbords());
                         //add border vertices
-                        addBorderVertcies(new ArrayList<Integer>(v.getStrongNeigbords()));
+                        addBorderVertcies(v.getStrongNeigbords());
                         clusters.add(newcluster);
 
                     }
@@ -395,7 +280,7 @@ public class Fraction {
         // print a cores vertices in the sub-graph
         System.out.println("print a cores vertices");
         for (Vertex v : cores_vertices)
-            System.out.println(v.getId() + " its neighbors " + v.getNeigbords());
+            System.out.println(v.getId());
         // print a border vertices
         System.out.println("print a border vertices");
         for (Integer v : border_vertices)
@@ -432,7 +317,7 @@ public class Fraction {
         return edges;
     }
 
-    public Set<Vertex> getCores_vertices() {
+    public List<Vertex> getCores_vertices() {
         return cores_vertices;
     }
 
@@ -444,38 +329,11 @@ public class Fraction {
         return outiler_vertices;
     }
 
-    public List<Vertex> getVerticeOutlier() {
-        List<Vertex> outliers_vertices = new ArrayList<Vertex>();
-        for (Integer i : outiler_vertices) {
-            outliers_vertices.add(getVertex(i));
-        }
-        return outliers_vertices;
-
-    }
-
     public Set<Integer> getBridge_vertices() {
-        return bridge_vertices;
-    }
-
-    public List<Vertex> getBridges_vertices() {
-        List<Vertex> bridge_vertices = new ArrayList<Vertex>();
-        for (Integer i : getBridge_vertices()) {
-            bridge_vertices.add(getVertex(i));
-        }
         return bridge_vertices;
     }
 
     public List<Set<Integer>> getClusters() {
         return clusters;
     }
-
-    public Set<Integer> getIdCores() {
-        Set<Integer> liste = new HashSet<Integer>();
-        for (Vertex v : cores_vertices) {
-            liste.add(v.getId());
-        }
-        return liste;
-    }
 }
-
-

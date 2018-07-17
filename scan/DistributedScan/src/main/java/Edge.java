@@ -15,7 +15,6 @@ public class Edge {
     public Edge(int fromNode, int endNode) {
         this.fromNode = fromNode;
         this.endNode = endNode;
-        this.similarity=0;
     }
 
     public Edge(int fromNode, int endNode, double similarity, int type) {

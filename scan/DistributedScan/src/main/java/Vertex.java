@@ -1,19 +1,17 @@
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Vertex {
 
     private int id;
     private String type;
     private List<Integer> neigbords;
-    private Set<Integer> strongNeigbords;
+    private List<Integer> strongNeigbords;
 
     public Vertex(int id) {
         this.id = id;
         neigbords = new ArrayList<Integer>();
-        strongNeigbords=new HashSet<Integer>();
+        strongNeigbords=new ArrayList<Integer>();
     }
 
     public Vertex() {
@@ -88,7 +86,7 @@ public class Vertex {
     {
         this.strongNeigbords.add(neighbors);
     }
-    public Set<Integer> getStrongNeigbords()
+    public List<Integer> getStrongNeigbords()
     {
         return strongNeigbords;
     }
